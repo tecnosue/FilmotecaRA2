@@ -40,6 +40,8 @@ import com.campusdigitalfp.filmotecav2.common.Boton
 import com.campusdigitalfp.filmotecav2.common.FilmTopAppBar
 import com.campusdigitalfp.filmotecav2.viewmodel.FilmViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import com.campusdigitalfp.filmotecav2.common.CameraCapture
 
 @Composable
 fun FilmEditScreen(navController: NavHostController, film: Film, viewModel: FilmViewModel = viewModel()) {
@@ -91,24 +93,47 @@ fun EditorFilm(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(
-                    id = context.resources.getIdentifier(film.imagen, "drawable", context.packageName).let {
-                        if (it != 0) it else R.drawable.icono_pelicula
-                    }
-                ),
-                contentDescription = "Icono película",
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(70.dp),
-            )
-            Button(
-                onClick = { /*No implementado*/ },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(1.dp)
-            ) {
-                Text("Capturar fotografía")
+//            Image(
+//                painter = painterResource(
+//                    id = context.resources.getIdentifier(film.imagen, "drawable", context.packageName).let {
+//                        if (it != 0) it else R.drawable.icono_pelicula
+//                    }
+//                ),
+//                contentDescription = "Icono película",
+//                modifier = Modifier
+//                    .padding(4.dp)
+//                    .size(70.dp),
+//            )
+//            Button(
+//                onClick = { /*No implementado*/ },
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .padding(1.dp)
+//            ) {
+//                Text("Capturar fotografía")
+//            }
+            val imageResId = context.resources.getIdentifier(film.imagen, "drawable", context.packageName)
+            if (imageResId != 0) {
+                Image(
+                    painter = painterResource(id = imageResId),
+                    contentDescription = "Icono película",
+                    modifier = Modifier.padding(4.dp).size(70.dp)
+                )
+            } else if (film.imagen.startsWith("file://") || film.imagen.startsWith("/")) {
+                Image(
+                    painter = rememberAsyncImagePainter(film.imagen),
+                    contentDescription = "Icono película",
+                    modifier = Modifier.padding(4.dp).size(70.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.icono_pelicula),
+                    contentDescription = "Icono película",
+                    modifier = Modifier.padding(4.dp).size(70.dp)
+                )
+            }
+            Box(modifier = Modifier.weight(1f).padding(1.dp)) {
+                CameraCapture(viewModel, film.id, film.imagen)
             }
             Button(
                 onClick = { /*No implementado*/ },

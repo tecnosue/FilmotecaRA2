@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import com.campusdigitalfp.filmotecav2.R
 import com.campusdigitalfp.filmotecav2.common.Boton
 import com.campusdigitalfp.filmotecav2.common.FilmTopAppBar
+import com.campusdigitalfp.filmotecav2.common.VideoItem
 
 @Composable
 fun AboutScreen(navController: NavHostController) {
@@ -58,6 +59,11 @@ fun AboutScreen(navController: NavHostController) {
                 contentDescription = stringResource(R.string.avatar_del_creador),
                 Modifier.height(100.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            VideoItem("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4")
+            Spacer(modifier = Modifier.height(16.dp))
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

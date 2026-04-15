@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.campusdigitalfp.filmotecav2.R
 import com.campusdigitalfp.filmotecav2.common.FilmTopAppBar
 import com.campusdigitalfp.filmotecav2.model.Film
@@ -118,11 +119,26 @@ fun VistaFilm(film: Film, onClick: () -> Unit, onLongClick: () -> Unit, isSelect
     ) {
         val context = LocalContext.current
         val imageResId = context.resources.getIdentifier(film.imagen, "drawable", context.packageName)
-        Image(
-            painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.icono_pelicula),
-            contentDescription = film.title,
-            modifier = Modifier.size(80.dp)
-        )
+        if (imageResId != 0) {
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = film.title,
+                modifier = Modifier.size(80.dp)
+            )
+        } else if (film.imagen.startsWith("file://") || film.imagen.startsWith("/")) {
+            Image(
+                painter = rememberAsyncImagePainter(film.imagen),
+                contentDescription = film.title,
+                modifier = Modifier.size(80.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.icono_pelicula),
+                contentDescription = film.title,
+                modifier = Modifier.size(80.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(

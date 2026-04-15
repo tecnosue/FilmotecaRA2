@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.campusdigitalfp.filmotecav2.model.Film
 //import com.campusdigitalfp.filmotecav2.model.FilmDataSource
 import com.campusdigitalfp.filmotecav2.R
@@ -95,7 +96,7 @@ fun RelatedFilmListContent(
                 //  pasarle el index original
                 //val originalIndex = FilmDataSource.films.indexOf(film)
                 Log.i("Filmoteca", "vamos a la peli seleccionada...")
-                navController.navigate("data/$film.id")}
+                navController.navigate("data/${film.id}")}
 
             )
         }
@@ -112,17 +113,29 @@ fun VistaFilm(film: Film, onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable(onClick = onClick)
     ) {
-        val context = LocalContext.current
 
-        Image(
-            painter = painterResource(id = context.resources.getIdentifier(film.imagen, "drawable", context.packageName).let {
-                if (it != 0) it else R.drawable.icono_pelicula
-            }),
-            contentDescription = "Icono",
-            modifier = Modifier
-                .padding( 0.dp)
-                .size( 80.dp)
-        )
+        val context = LocalContext.current
+        val imageResId = context.resources.getIdentifier(film.imagen, "drawable", context.packageName)
+
+        if (imageResId != 0) {
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = "Icono",
+                modifier = Modifier.padding(0.dp).size(80.dp)
+            )
+        } else if (film.imagen.startsWith("file://") || film.imagen.startsWith("/")) {
+            Image(
+                painter = rememberAsyncImagePainter(film.imagen),
+                contentDescription = "Icono",
+                modifier = Modifier.padding(0.dp).size(80.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.icono_pelicula),
+                contentDescription = "Icono",
+                modifier = Modifier.padding(0.dp).size(80.dp)
+            )
+        }
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(

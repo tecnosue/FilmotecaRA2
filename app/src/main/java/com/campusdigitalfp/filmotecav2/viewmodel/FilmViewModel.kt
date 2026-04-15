@@ -84,4 +84,12 @@ class FilmViewModel : ViewModel() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
         GoogleSignIn.getClient(context, gso).signOut()
     }
+    fun updateFilmImage(filmId: String, imageUrl: String) {
+        viewModelScope.launch {
+            val film = _films.value.find { it.id == filmId }
+            film?.let {
+                repository.updateFilm(it.copy(imagen = imageUrl))
+            }
+        }
+    }
 }

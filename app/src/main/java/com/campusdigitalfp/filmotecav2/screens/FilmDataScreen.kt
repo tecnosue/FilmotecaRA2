@@ -31,6 +31,8 @@ import com.campusdigitalfp.filmotecav2.model.Film
 import com.campusdigitalfp.filmotecav2.R
 import com.campusdigitalfp.filmotecav2.common.FilmTopAppBar
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import com.campusdigitalfp.filmotecav2.common.CameraCapture
 import com.campusdigitalfp.filmotecav2.viewmodel.FilmViewModel
 
 @Composable
@@ -54,6 +56,7 @@ fun FilmDataScreen(navController: NavHostController, film: Film, viewModel: Film
         )
         {
             VistaFilm(film)
+
             Box(modifier = Modifier.fillMaxWidth()) {
                 Row {
                     Button(
@@ -96,19 +99,27 @@ fun VistaFilm(film: Film) {
 
     Column(modifier = Modifier.padding(8.dp)) {
         Row(modifier = Modifier.padding(8.dp)) {
-            Image(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(150.dp),
-                painter = painterResource(
-                    id = context.resources.getIdentifier(film.imagen, "drawable", context.packageName).let {
-                        if (it != 0) it else R.drawable.icono_pelicula
-                    }
-                ),
-
-
-                contentDescription = "Icono de la película"
-            )
+//
+            val imageResId = context.resources.getIdentifier(film.imagen, "drawable", context.packageName)
+            if (imageResId != 0) {
+                Image(
+                    painter = painterResource(id = imageResId),
+                    contentDescription = "Icono película",
+                    modifier = Modifier.padding(4.dp).size(70.dp)
+                )
+            } else if (film.imagen.startsWith("file://") || film.imagen.startsWith("/")) {
+                Image(
+                    painter = rememberAsyncImagePainter(film.imagen),
+                    contentDescription = "Icono película",
+                    modifier = Modifier.padding(4.dp).size(70.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.icono_pelicula),
+                    contentDescription = "Icono película",
+                    modifier = Modifier.padding(4.dp).size(70.dp)
+                )
+            }
             Column {
                 Text(
                     text = film.title.toString(),
